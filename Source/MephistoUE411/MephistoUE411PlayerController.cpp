@@ -1,8 +1,10 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
 #include "MephistoUE411.h"
+#include "MephistoUE411Character.h"
 #include "MephistoUE411PlayerController.h"
 #include "AI/Navigation/NavigationSystem.h"
+
 
 AMephistoUE411PlayerController::AMephistoUE411PlayerController()
 {
@@ -17,8 +19,15 @@ void AMephistoUE411PlayerController::PlayerTick(float DeltaTime)
 	// keep updating the destination every tick while desired
 	if (bMoveToMouseCursor)
 	{
+		FHitResult Hit;
+		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+
+		CastFireball(Hit.ImpactPoint);
+
 		MoveToMouseCursor();
 	}
+
+
 }
 
 void AMephistoUE411PlayerController::SetupInputComponent()
@@ -87,4 +96,18 @@ void AMephistoUE411PlayerController::OnSetDestinationReleased()
 {
 	// clear flag to indicate we should stop updating the destination
 	bMoveToMouseCursor = false;
+}
+
+void AMephistoUE411PlayerController::CastFireball(const FVector Location) {
+
+	AMephistoUE411Character* const Pawn = Cast<AMephistoUE411Character>(GetPawn());
+
+	if (Pawn) {
+		FVector2D ScreenSpaceLocation(Location);
+
+		FHitResult HitResult;
+		GetHitResultAtScreenPosition(ScreenSpaceLocation, CurrentClickTraceChannel, true, HitResult);
+
+		Pawn->CastFireball(HitResult.ImpactPoint);
+	}
 }

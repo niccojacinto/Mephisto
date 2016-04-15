@@ -4,6 +4,7 @@
 #include "MephistoUE411Character.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
+#include "Fireball.h"
 
 AMephistoUE411Character::AMephistoUE411Character()
 {
@@ -64,4 +65,17 @@ void AMephistoUE411Character::Tick(float DeltaSeconds)
 			CursorToWorld->SetWorldRotation(CursorR);
 		}
 	}
+}
+
+void AMephistoUE411Character::CastFireball(const FVector FireDirection) {
+	// UE_LOG(LogTemp, Warning, TEXT("Casting Fireball"));
+
+	const FRotator FireRotation = FireDirection.Rotation();
+	// Spawn projectile at an offset from this pawn
+	const FVector SpawnLocation = GetActorLocation();
+
+	UWorld* const World = GetWorld();
+	// spawn the projectile
+	World->SpawnActor<AFireball>(SpawnLocation, FireRotation);
+
 }
