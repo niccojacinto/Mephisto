@@ -19,7 +19,7 @@ public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
-	void CastFireball(const FVector Location);
+	void CastFireball(const FVector TargetLocation);
 
 private:
 	/** Top down camera */

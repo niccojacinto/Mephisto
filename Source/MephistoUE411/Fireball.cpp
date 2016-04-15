@@ -10,6 +10,7 @@ AFireball::AFireball()
 	duration = 3.0f;
 	speed = 20.0f;
 
+
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -61,7 +62,7 @@ void AFireball::Tick( float DeltaTime )
 	duration -= DeltaTime;
 	if (duration <= 0) Destroy(true);
 
-	FVector newPos = GetActorLocation() + FVector::ForwardVector * speed;
+	FVector newPos = GetActorLocation() + GetActorForwardVector() * speed;
 	SetActorLocation(newPos);
 }
 

@@ -67,15 +67,14 @@ void AMephistoUE411Character::Tick(float DeltaSeconds)
 	}
 }
 
-void AMephistoUE411Character::CastFireball(const FVector FireDirection) {
+void AMephistoUE411Character::CastFireball(const FVector TargetLocation) {
 	// UE_LOG(LogTemp, Warning, TEXT("Casting Fireball"));
 
-	const FRotator FireRotation = FireDirection.Rotation();
 	// Spawn projectile at an offset from this pawn
 	const FVector SpawnLocation = GetActorLocation();
 
 	UWorld* const World = GetWorld();
 	// spawn the projectile
-	World->SpawnActor<AFireball>(SpawnLocation, FireRotation);
+	World->SpawnActor<AFireball>(SpawnLocation, GetActorRotation());
 
 }
