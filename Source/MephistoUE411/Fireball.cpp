@@ -2,11 +2,13 @@
 
 #include "MephistoUE411.h"
 #include "Fireball.h"
+#include "Barbarian.h"
 
 
 // Sets default values
 AFireball::AFireball()
 {
+
 	duration = 3.0f;
 	speed = 20.0f;
 
@@ -15,18 +17,18 @@ AFireball::AFireball()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Root
-	USphereComponent* SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Component"));
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Component"));
 	RootComponent = SphereComponent;
-	SphereComponent->InitSphereRadius(40.0f);
+	SphereComponent->InitSphereRadius(10.0f);
 
 	// Sphere
-	UStaticMeshComponent* SphereVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere Visual"));
+	SphereVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere Visual"));
 	SphereVisual->AttachTo(RootComponent);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereVisualAsset(TEXT("/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere"));
 	if (SphereVisualAsset.Succeeded())
 	{
 		SphereVisual->SetStaticMesh(SphereVisualAsset.Object);
-		SphereVisual->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+		SphereVisual->SetRelativeLocation(FVector(0.0f, 0.0f, -5.0f));
 		SphereVisual->SetWorldScale3D(FVector(0.2f));
 	}
 
@@ -51,13 +53,32 @@ AFireball::AFireball()
 	}
 
 
+	deathParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("DeathParticles"));
+	deathParticle->AttachTo(RootComponent);
+	deathParticle->bAutoActivate = false;
+	deathParticle->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> DeathAsset(TEXT("/Game/StarterContent/Particles/P_Explosion.P_Explosion"));
+	if (DeathAsset.Succeeded()) {
+		deathParticle->SetTemplate(DeathAsset.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<USoundBase> FireAudio(TEXT("/Game/TopDownCPP/Audio/FireballHit.FireballHit"));
+	HitSound = FireAudio.Object;
+
+
+	SetActorEnableCollision(true);
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AFireball::OnHit);
+	// SphereVisual->OnComponentBeginOverlap.AddDynamic(this, &AFireball::OnHit);
+
+
 }
 
 // Called when the game starts or when spawned
 void AFireball::BeginPlay()
 {
 	Super::BeginPlay();
-	
+;
 }
 
 // Called every frame
@@ -69,5 +90,16 @@ void AFireball::Tick( float DeltaTime )
 
 	FVector newPos = GetActorLocation() + GetActorForwardVector() * speed;
 	SetActorLocation(newPos);
+}
+
+void AFireball::OnHit(AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
+	if (OtherActor != NULL && OtherActor != this && OtherComp != NULL) {
+
+		if (OtherActor->IsA(ABarbarian::StaticClass())) {
+			deathParticle->Activate(true);
+			UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
+		}
+
+	}
 }
 

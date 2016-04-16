@@ -18,6 +18,14 @@ protected:
 	/** Check if Shift is held*/
 	uint32 bCastMode : 1;
 
+	uint32 bCanCast : 1;
+	float castRate;
+
+	USoundBase* FireSound;
+
+	/** Handle for efficient management of ShotTimerExpired timer */
+	FTimerHandle TimerHandle_ShotTimerExpired;
+
 
 	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;
@@ -39,6 +47,7 @@ protected:
 
 	void ToggleCastMode();
 	void CastFireball(const FVector Location);
+	void ShotTimerExpired();
 
 
 };

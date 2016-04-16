@@ -4,12 +4,18 @@
 #include "MephistoUE411Character.h"
 #include "MephistoUE411PlayerController.h"
 #include "AI/Navigation/NavigationSystem.h"
+#include "TimerManager.h"
 
 
 AMephistoUE411PlayerController::AMephistoUE411PlayerController()
 {
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
+	castRate = 1.0f;
+	bCanCast = true;
+
+	static ConstructorHelpers::FObjectFinder<USoundBase> FireAudio(TEXT("/Game/TopDownCPP/Audio/FireballCast.FireballCast"));
+	FireSound = FireAudio.Object;
 }
 
 void AMephistoUE411PlayerController::PlayerTick(float DeltaTime)
@@ -29,8 +35,6 @@ void AMephistoUE411PlayerController::PlayerTick(float DeltaTime)
 		else {
 			MoveToMouseCursor();
 		}
-
-
 
 	}
 
@@ -113,14 +117,27 @@ void AMephistoUE411PlayerController::ToggleCastMode() {
 
 void AMephistoUE411PlayerController::CastFireball(const FVector Location) {
 
-	AMephistoUE411Character* const Pawn = Cast<AMephistoUE411Character>(GetPawn());
+	if (bCanCast) {
 
-	if (Pawn) {
-		FVector2D ScreenSpaceLocation(Location);
+		AMephistoUE411Character* const Pawn = Cast<AMephistoUE411Character>(GetPawn());
 
-		FHitResult HitResult;
-		GetHitResultAtScreenPosition(ScreenSpaceLocation, CurrentClickTraceChannel, true, HitResult);
+		if (Pawn) {
+			// FVector2D ScreenSpaceLocation(Location);
 
-		Pawn->CastFireball(HitResult.ImpactPoint);
+			// FHitResult HitResult;
+			// GetHitResultAtScreenPosition(ScreenSpaceLocation, CurrentClickTraceChannel, true, HitResult);
+
+			Pawn->CastFireball(Location);
+
+			UGameplayStatics::PlaySoundAtLocation(this, FireSound, Pawn->GetActorLocation());
+
+			bCanCast = false;
+			UWorld* const World = GetWorld();
+			World->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &AMephistoUE411PlayerController::ShotTimerExpired, castRate);
+		}
 	}
+}
+
+void AMephistoUE411PlayerController::ShotTimerExpired() {
+	bCanCast = true;
 }
