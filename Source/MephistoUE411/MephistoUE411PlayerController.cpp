@@ -19,12 +19,19 @@ void AMephistoUE411PlayerController::PlayerTick(float DeltaTime)
 	// keep updating the destination every tick while desired
 	if (bMoveToMouseCursor)
 	{
-		FHitResult Hit;
-		GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-		CastFireball(Hit.ImpactPoint);
+		if (bCastMode) {
+			FHitResult Hit;
+			GetHitResultUnderCursor(ECC_Visibility, false, Hit);
 
-		MoveToMouseCursor();
+			CastFireball(Hit.ImpactPoint);
+		}
+		else {
+			MoveToMouseCursor();
+		}
+
+
+
 	}
 
 
@@ -37,6 +44,8 @@ void AMephistoUE411PlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AMephistoUE411PlayerController::OnSetDestinationPressed);
 	InputComponent->BindAction("SetDestination", IE_Released, this, &AMephistoUE411PlayerController::OnSetDestinationReleased);
+	InputComponent->BindAction("ToggleCastMode", IE_Pressed, this, &AMephistoUE411PlayerController::ToggleCastMode);
+	InputComponent->BindAction("ToggleCastMode", IE_Released, this, &AMephistoUE411PlayerController::ToggleCastMode);
 
 	// support touch devices 
 	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AMephistoUE411PlayerController::MoveToTouchLocation);
@@ -96,6 +105,10 @@ void AMephistoUE411PlayerController::OnSetDestinationReleased()
 {
 	// clear flag to indicate we should stop updating the destination
 	bMoveToMouseCursor = false;
+}
+
+void AMephistoUE411PlayerController::ToggleCastMode() {
+	bCastMode = bCastMode ? false : true;
 }
 
 void AMephistoUE411PlayerController::CastFireball(const FVector Location) {

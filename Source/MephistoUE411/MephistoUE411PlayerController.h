@@ -15,6 +15,9 @@ protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
 
+	/** Check if Shift is held*/
+	uint32 bCastMode : 1;
+
 
 	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;
@@ -34,7 +37,7 @@ protected:
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
 
-
+	void ToggleCastMode();
 	void CastFireball(const FVector Location);
 
 

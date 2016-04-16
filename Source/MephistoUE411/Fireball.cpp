@@ -14,17 +14,12 @@ AFireball::AFireball()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Collider
+	// Root
 	USphereComponent* SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Component"));
-	// SphereComponent->AttachTo(RootComponent);
 	RootComponent = SphereComponent;
 	SphereComponent->InitSphereRadius(40.0f);
 
-	UParticleSystem* FlameParticle = CreateDefaultSubobject<UParticleSystem>(TEXT("Particle System"));
-	// FlameParticle->AttachTo(RootComponent);
-
-	// Placeholder
-	
+	// Sphere
 	UStaticMeshComponent* SphereVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere Visual"));
 	SphereVisual->AttachTo(RootComponent);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereVisualAsset(TEXT("/Game/StarterContent/Shapes/Shape_Sphere.Shape_Sphere"));
@@ -34,18 +29,28 @@ AFireball::AFireball()
 		SphereVisual->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 		SphereVisual->SetWorldScale3D(FVector(0.2f));
 	}
-	
 
-	// Create a particle system that we can activate or deactivate
+	// Molten Rock Material -- Using Grime at the moment
+	static ConstructorHelpers::FObjectFinder<UMaterial> Material(TEXT("/Game/StarterContent/Materials/M_Concrete_Grime.M_Concrete_Grime"));
+	if (Material.Succeeded()) {
+		UMaterialInstance* MoltenRock = (UMaterialInstance*)Material.Object;
+		// UMaterialInstanceDynamic* MI = UMaterialInstanceDynamic::Create(SphereVisual->GetMaterial(0), MoltenRock);
+
+		SphereVisual->SetMaterial(0, Material.Object);
+	}
+
+
+	// Fire Particles
 	UParticleSystemComponent* OurParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MovementParticles"));
 	OurParticleSystem->AttachTo(RootComponent);
 	OurParticleSystem->bAutoActivate =  true;
 	OurParticleSystem->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> ParticleAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
-	if (ParticleAsset.Succeeded())
-	{
+	if (ParticleAsset.Succeeded()) {
 		OurParticleSystem->SetTemplate(ParticleAsset.Object);
 	}
+
+
 }
 
 // Called when the game starts or when spawned
