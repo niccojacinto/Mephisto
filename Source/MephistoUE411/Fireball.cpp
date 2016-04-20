@@ -96,6 +96,16 @@ void AFireball::OnHit(AActor* OtherActor, class UPrimitiveComponent* OtherComp, 
 	if (OtherActor != NULL && OtherActor != this && OtherComp != NULL) {
 
 		if (OtherActor->IsA(ABarbarian::StaticClass())) {
+
+			// APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+			// Create a damage event  
+			TSubclassOf<UDamageType> const ValidDamageTypeClass = TSubclassOf<UDamageType>(UDamageType::StaticClass());
+			FDamageEvent DamageEvent(ValidDamageTypeClass);
+
+			const float DamageAmount = 60.0f;
+			OtherActor->TakeDamage(DamageAmount, DamageEvent, NULL, this);
+
 			deathParticle->Activate(true);
 			UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
 		}

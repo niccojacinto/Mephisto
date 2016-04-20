@@ -11,6 +11,11 @@ class MEPHISTOUE411_API ABarbarian : public ACharacter
 	GENERATED_BODY()
 
 public:
+
+	USoundBase* DeathSound;
+	USoundBase* HurtSound;
+
+	float Health;
 	// Sets default values for this character's properties
 	ABarbarian();
 
@@ -25,5 +30,6 @@ public:
 
 	// Set size for player capsule
 	//	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-	
+
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser) override;
 };
