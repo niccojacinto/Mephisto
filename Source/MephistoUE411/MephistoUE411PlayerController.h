@@ -9,6 +9,9 @@ class AMephistoUE411PlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Can Cast")
+	uint32 bCanCast : 1;
+
 	AMephistoUE411PlayerController();
 
 protected:
@@ -18,7 +21,6 @@ protected:
 	/** Check if Shift is held*/
 	uint32 bCastMode : 1;
 
-	uint32 bCanCast : 1;
 	float castRate;
 
 	USoundBase* FireSound;
@@ -48,7 +50,6 @@ protected:
 	void ToggleCastMode();
 	void CastFireball(const FVector Location);
 	void ShotTimerExpired();
-
 
 };
 

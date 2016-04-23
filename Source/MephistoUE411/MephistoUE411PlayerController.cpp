@@ -131,7 +131,7 @@ void AMephistoUE411PlayerController::CastFireball(const FVector Location) {
 
 			UGameplayStatics::PlaySoundAtLocation(this, FireSound, Pawn->GetActorLocation());
 
-			bCanCast = false;
+			//bCanCast = false;
 			UWorld* const World = GetWorld();
 			World->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &AMephistoUE411PlayerController::ShotTimerExpired, castRate);
 		}
