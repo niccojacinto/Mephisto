@@ -81,5 +81,7 @@ void AMephistoUE411Character::CastFireball(const FVector TargetLocation) {
 
 	UWorld* const World = GetWorld();
 	// spawn the projectile
-	World->SpawnActor<AFireball>(SpawnLocation, Direction.Rotation());
+
+	// World->SpawnActor<AFireball>(SpawnLocation, Direction.Rotation()); //Direction To Cursor
+	World->SpawnActor<AFireball>(SpawnLocation, GetActorRotation()); // Direction To Player Rotation
 }

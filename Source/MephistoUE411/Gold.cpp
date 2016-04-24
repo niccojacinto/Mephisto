@@ -16,7 +16,7 @@ AGold::AGold()
 	// Root
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Component"));
 	RootComponent = SphereComponent;
-	SphereComponent->InitSphereRadius(40.0f);
+	SphereComponent->InitSphereRadius(80.0f);
 
 	// Coin Shape a.k.a Cylinder
 	CoinVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Coin Visual"));
