@@ -9,6 +9,7 @@
 
 AMephistoUE411Character::AMephistoUE411Character()
 {
+	FHealth = FMana = 1.0f;
 	// Set size for player capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -54,6 +55,10 @@ AMephistoUE411Character::AMephistoUE411Character()
 
 void AMephistoUE411Character::Tick(float DeltaSeconds)
 {
+	if (FMana < 1.0f)
+	{
+		FMana += 0.001f;
+	}
 	if (CursorToWorld != nullptr)
 	{
 		if (APlayerController* PC = Cast<APlayerController>(GetController()))
@@ -74,25 +79,30 @@ void AMephistoUE411Character::Tick(float DeltaSeconds)
 }
 
 void AMephistoUE411Character::CastFireball(const FVector TargetLocation) {
-	// UE_LOG(LogTemp, Warning, TEXT("Casting Fireball"));
+	if (FMana > 0.2f)
+	{
+		// UE_LOG(LogTemp, Warning, TEXT("Casting Fireball"));
 
-	// Spawn projectile at an offset from this pawn
-	FVector Direction = TargetLocation - GetActorLocation();
-	FRotator NewRot = Direction.Rotation();
-	NewRot.Pitch = GetActorRotation().Pitch;
-	// NewRot.Yaw = FRotator::ClampAxis(NewRot.Yaw);
-	SetActorRotation(NewRot);
+		// Spawn projectile at an offset from this pawn
+		FVector Direction = TargetLocation - GetActorLocation();
+		FRotator NewRot = Direction.Rotation();
+		NewRot.Pitch = GetActorRotation().Pitch;
+		// NewRot.Yaw = FRotator::ClampAxis(NewRot.Yaw);
+		SetActorRotation(NewRot);
 
-	const FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100;
+		const FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100;
 
-	UWorld* const World = GetWorld();
-	// spawn the projectile
+		UWorld* const World = GetWorld();
+		// spawn the projectile
 
-	// World->SpawnActor<AFireball>(SpawnLocation, Direction.Rotation()); //Direction To Cursor
-	World->SpawnActor<AFireball>(SpawnLocation, GetActorRotation()); // Direction To Player Rotation
+		// World->SpawnActor<AFireball>(SpawnLocation, Direction.Rotation()); //Direction To Cursor
+		World->SpawnActor<AFireball>(SpawnLocation, GetActorRotation()); // Direction To Player Rotation
 
-	if (!GetMesh()) return;
-	UMyAnimInstance* Animation = Cast<UMyAnimInstance>(GetMesh()->GetAnimInstance());
-	if (!Animation) return;
-	Animation->Attacking = true;
+		FMana -= 0.2f;
+
+		if (!GetMesh()) return;
+		UMyAnimInstance* Animation = Cast<UMyAnimInstance>(GetMesh()->GetAnimInstance());
+		if (!Animation) return;
+		Animation->Attacking = true;
+	}
 }
