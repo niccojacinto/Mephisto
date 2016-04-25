@@ -5,6 +5,7 @@
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "Fireball.h"
+#include "MyAnimInstance.h"
 
 AMephistoUE411Character::AMephistoUE411Character()
 {
@@ -63,6 +64,11 @@ void AMephistoUE411Character::Tick(float DeltaSeconds)
 			FRotator CursorR = CursorFV.Rotation();
 			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
 			CursorToWorld->SetWorldRotation(CursorR);
+
+			if (!GetMesh()) return;
+			UMyAnimInstance* Animation = Cast<UMyAnimInstance>(GetMesh()->GetAnimInstance());
+			if (!Animation) return;
+			Animation->Attacking = false;
 		}
 	}
 }
@@ -84,4 +90,9 @@ void AMephistoUE411Character::CastFireball(const FVector TargetLocation) {
 
 	// World->SpawnActor<AFireball>(SpawnLocation, Direction.Rotation()); //Direction To Cursor
 	World->SpawnActor<AFireball>(SpawnLocation, GetActorRotation()); // Direction To Player Rotation
+
+	if (!GetMesh()) return;
+	UMyAnimInstance* Animation = Cast<UMyAnimInstance>(GetMesh()->GetAnimInstance());
+	if (!Animation) return;
+	Animation->Attacking = true;
 }

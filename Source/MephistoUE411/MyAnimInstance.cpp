@@ -4,3 +4,8 @@
 #include "MyAnimInstance.h"
 
 
+UMyAnimInstance::UMyAnimInstance(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	Attacking = false;
+}
